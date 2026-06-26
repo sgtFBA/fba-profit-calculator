@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amazon FBA Profit Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400..900;1,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#131921;
@@ -47,21 +47,41 @@
     text-align:center;
     margin-bottom: 10px;
     opacity:0.85;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero{
+    position: relative;
+    padding-top: 4px;
+  }
+  .hero-icon{
+    position: absolute;
+    top: 8%;
+    right: 4%;
+    transform: rotate(18deg);
+    width: 110px;
+    max-width: 28vw;
+    opacity: 0.1;
+    z-index: 0;
+    pointer-events: none;
   }
 
   h1{
-    font-family:'Fraunces', serif;
-    font-weight:600;
+    font-family:'Archivo', sans-serif;
+    font-weight:800;
     font-size: clamp(28px, 5vw, 42px);
     line-height:1.08;
     color: var(--paper-light);
     text-align:center;
     margin: 0 0 10px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
   }
   h1 em{
-    font-style: italic;
-    font-weight: 500;
+    font-style: normal;
+    font-weight: 800;
     color: var(--brass-light);
   }
 
@@ -72,24 +92,30 @@
     max-width: 440px;
     margin: 0 auto 20px;
     line-height:1.5;
+    position: relative;
+    z-index: 1;
   }
 
   .example-callout{
-    display:flex;
-    align-items:baseline;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap: 6px;
     text-align:center;
     background: rgba(255,153,0,0.1);
     border: 1px solid rgba(255,153,0,0.3);
-    border-radius: 999px;
-    padding: 10px 20px;
+    border-radius: 14px;
+    padding: 14px 22px;
     margin: 0 auto 32px;
-    max-width: fit-content;
+    max-width: 480px;
     font-family:'IBM Plex Sans', sans-serif;
     font-size: 14px;
+    line-height: 1.55;
     color: rgba(248,242,228,0.85);
+    position: relative;
+    z-index: 1;
+  }
+  .example-callout .example-footnote{
+    display:block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: rgba(248,242,228,0.55);
   }
   .example-callout strong{
     font-family:'IBM Plex Mono', monospace;
@@ -403,10 +429,27 @@
 <body>
 
 <div class="wrap">
-  <h1>Amazon FBA<br><em>Profit Calculator</em></h1>
-  <p class="sub">See what your starting capital could become.</p>
-  <div class="example-callout">
-    Example: start with <strong>£1,000</strong> and by the end of Year 1 it could become <strong id="exampleYear1">£8,633</strong>
+  <div class="hero">
+    <svg class="hero-icon" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="5" width="90" height="110" rx="8" stroke="#FFFFFF" stroke-width="3"/>
+      <rect x="16" y="16" width="68" height="24" rx="3" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="24" cy="56" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="50" cy="56" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="76" cy="56" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="24" cy="78" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="50" cy="78" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="76" cy="78" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="24" cy="100" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="50" cy="100" r="6" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="76" cy="100" r="6" stroke="#FFFFFF" stroke-width="3"/>
+    </svg>
+    <div class="eyebrow">SGTFBA</div>
+    <h1>Amazon FBA<br><em>Profit Calculator</em></h1>
+    <p class="sub">See what your starting capital could become.</p>
+    <div class="example-callout">
+      A seller who starts with <strong>£1,000</strong>, achieves a <strong>30% ROI</strong>, based on purchasing stock that turns around in <strong>38 days</strong>, could see this become <strong id="exampleYear1">£8,633</strong> by the end of Year 1.
+      <span class="example-footnote">Your result depends on how well you source and sell stock, this is just one example.</span>
+    </div>
   </div>
 
   <div class="card">
@@ -418,12 +461,12 @@
       <div class="field">
         <label>Average ROI per cycle <span class="label-value" id="rateLabel">30%</span></label>
         <input type="range" id="rate" min="1" max="100" step="1" value="30">
-        <p class="field-note">A "cycle" is one full round of buying stock and getting paid for it — set below. We use this instead of a fixed month or quarter because that's how money actually moves in FBA. Enter your ROI after Amazon's fees, ad spend and cost of goods.</p>
+        <p class="field-note">A "cycle" is one full round of buying stock and getting paid for it, set below. We use this instead of a fixed month or quarter because that's how money actually moves in FBA. Enter your ROI after Amazon's fees, ad spend and cost of goods.</p>
       </div>
       <div class="field">
         <label>Days from purchase to getting paid <span class="label-value" id="cycleLabel">38 days</span></label>
         <input type="range" id="cycleDays" min="14" max="90" step="1" value="38">
-        <p class="field-note">Covers shipping to Amazon, check-in, time to sell, the 14-day payout hold, and the bank transfer — shorter if stock sells fast, longer if stock remains unsold.</p>
+        <p class="field-note">Covers shipping to Amazon, check-in, time to sell, the 14-day payout hold, and the bank transfer. Shorter if stock sells fast, longer if stock remains unsold.</p>
       </div>
       <div class="field">
         <label>Running costs per month (£)</label>
@@ -461,22 +504,22 @@
     </div>
 
     <div class="unlocked-note hidden" id="unlockedNote">
-      <span class="check">✓</span> Forecast unlocked in full — saved to your inbox too.
+      <span class="check">✓</span> Forecast unlocked in full, saved to your inbox too.
     </div>
   </div>
 
   <div class="assumptions">
     <p class="assumptions-title">What this assumes</p>
     <ul>
-      <li>All profit is reinvested back into stock — none is withdrawn or spent</li>
-      <li>Your ROI and reinvestment cycle stay consistent — in reality these vary, especially as your business grows</li>
+      <li>All profit is reinvested back into stock; none is withdrawn or spent</li>
+      <li>Your ROI and reinvestment cycle stay consistent. In reality these vary, especially as your business grows</li>
       <li>No one-off costs (equipment, initial tools) or unexpected events (returns, lost stock, account issues, supplier problems)</li>
       <li>Figures are before tax</li>
     </ul>
   </div>
 
   <footer>
-    Illustrative only — actual margins, fees, and ROI vary and are never guaranteed.<br>
+    Illustrative only. Actual margins, fees, and ROI vary and are never guaranteed.<br>
     Growth compounds daily based on your ROI and reinvestment cycle, minus running costs.
   </footer>
 </div>
