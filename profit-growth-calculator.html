@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazon FBA Profit Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#131921;
+    --ledger:#131921;
+    --ledger-dark:#0E141B;
+    --paper:#FFFFFF;
+    --paper-light:#F7F8FA;
+    --brass:#FF9900;
+    --brass-light:#FFAC31;
+    --sage:#146EB4;
+    --sage-line: rgba(19,25,33,0.14);
+    --locked: #C7CDD6;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--ledger);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,0.04), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(255,255,255,0.03), transparent 40%);
+    color: var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100%;
+    padding: 36px 16px 56px;
+  }
+
+  .wrap{
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .eyebrow{
+    color: var(--brass-light);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align:center;
+    margin-bottom: 10px;
+    opacity:0.85;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height:1.08;
+    color: var(--paper-light);
+    text-align:center;
+    margin: 0 0 10px;
+    letter-spacing: -0.01em;
+  }
+  h1 em{
+    font-style: italic;
+    font-weight: 500;
+    color: var(--brass-light);
+  }
+
+  .sub{
+    text-align:center;
+    color: rgba(248,242,228,0.72);
+    font-size: 15px;
+    max-width: 440px;
+    margin: 0 auto 20px;
+    line-height:1.5;
+  }
+
+  .example-callout{
+    display:flex;
+    align-items:baseline;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap: 6px;
+    text-align:center;
+    background: rgba(255,153,0,0.1);
+    border: 1px solid rgba(255,153,0,0.3);
+    border-radius: 999px;
+    padding: 10px 20px;
+    margin: 0 auto 32px;
+    max-width: fit-content;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: rgba(248,242,228,0.85);
+  }
+  .example-callout strong{
+    font-family:'IBM Plex Mono', monospace;
+    color: var(--brass-light);
+    font-weight:600;
+  }
+
+  /* ===== Calculator card ===== */
+  .card{
+    background: var(--paper);
+    border-radius: 4px;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,0,0,0.06);
+    overflow:hidden;
+  }
+
+  .inputs{
+    padding: 28px 28px 22px;
+    border-bottom: 1px dashed var(--sage-line);
+  }
+
+  .field{
+    margin-bottom: 18px;
+  }
+  .field:last-child{margin-bottom:0;}
+
+  label{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(42,31,20,0.6);
+    margin-bottom: 8px;
+    font-weight:600;
+  }
+
+  .label-value{
+    font-family:'IBM Plex Mono', monospace;
+    color: var(--ledger);
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .amount-input{
+    width:100%;
+    background: var(--paper-light);
+    border: 1px solid var(--sage-line);
+    border-radius: 3px;
+    padding: 12px 14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 22px;
+    font-weight:500;
+    color: var(--ink);
+    outline:none;
+  }
+  .amount-input:focus{
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(184,137,59,0.15);
+  }
+
+  input[type="range"]{
+    width:100%;
+    -webkit-appearance:none;
+    height: 4px;
+    background: var(--sage-line);
+    border-radius: 2px;
+    margin-top:4px;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px;height:18px;
+    border-radius:50%;
+    background: var(--brass);
+    border: 2px solid var(--paper-light);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    cursor:pointer;
+    margin-top: -1px;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:18px;height:18px;
+    border-radius:50%;
+    background: var(--brass);
+    border: 2px solid var(--paper-light);
+    cursor:pointer;
+  }
+
+  .field-note{
+    font-size: 12px;
+    color: rgba(19,25,33,0.55);
+    margin-top: 8px;
+    line-height: 1.45;
+  }
+
+  /* ===== Receipt tape ===== */
+  .tape-area{
+    background: var(--paper-light);
+    padding: 0 28px 8px;
+  }
+
+  .tape-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 18px 0 12px;
+  }
+  .tape-head .title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color: rgba(42,31,20,0.55);
+  }
+  .tape-head .pulse{
+    width:7px;height:7px;border-radius:50%;
+    background: var(--brass);
+    box-shadow: 0 0 0 0 rgba(184,137,59,0.6);
+    animation: blip 2.2s infinite;
+  }
+  @keyframes blip{
+    0%{ box-shadow: 0 0 0 0 rgba(184,137,59,0.5); }
+    70%{ box-shadow: 0 0 0 6px rgba(184,137,59,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(184,137,59,0); }
+  }
+
+  .row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding: 13px 0;
+    border-top: 1px solid var(--sage-line);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .row .yr{
+    font-size: 13px;
+    color: rgba(42,31,20,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .row .val{
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ledger);
+    transition: filter 0.4s ease, color 0.4s ease;
+  }
+  .row .gain{
+    font-size: 11.5px;
+    color: var(--brass);
+    margin-left: 8px;
+  }
+
+  .row.locked .val{
+    filter: blur(6px);
+    color: var(--locked);
+    user-select:none;
+  }
+  .row.locked .gain{ opacity:0; }
+
+  /* perforation divider */
+  .perf{
+    position:relative;
+    height: 18px;
+    margin: 4px 0 2px;
+  }
+  .perf::before{
+    content:"";
+    position:absolute;
+    top:50%; left:0; right:0;
+    border-top: 2px dotted var(--sage);
+  }
+  .perf span{
+    position:relative;
+    background: var(--paper-light);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sage);
+    padding: 0 8px;
+    display:inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* ===== Gate ===== */
+  .gate{
+    padding: 20px 28px 26px;
+    background: var(--paper-light);
+  }
+  .gate.hidden{ display:none; }
+
+  .gate-copy{
+    font-size: 13.5px;
+    color: rgba(42,31,20,0.7);
+    line-height:1.5;
+    margin: 0 0 14px;
+  }
+  .gate-copy strong{ color: var(--ledger); }
+
+  .gate-form{
+    display:flex;
+    gap:8px;
+  }
+  .gate-form input[type="email"]{
+    flex:1;
+    background: #fff;
+    border: 1px solid var(--sage-line);
+    border-radius: 3px;
+    padding: 11px 12px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    outline:none;
+    min-width: 0;
+  }
+  .gate-form input[type="email"]:focus{
+    border-color: var(--brass);
+    box-shadow: 0 0 0 3px rgba(184,137,59,0.15);
+  }
+
+  .unlock-btn{
+    background: var(--brass);
+    color: var(--ink);
+    border:none;
+    border-radius: 3px;
+    padding: 11px 18px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    font-size: 14px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .unlock-btn:hover{ background: var(--brass-light); }
+  .unlock-btn:active{ transform: scale(0.97); }
+  .unlock-btn:disabled{ opacity:0.6; cursor:default; }
+
+  .gate-error{
+    font-size: 12.5px;
+    color: #9C3B2E;
+    margin-top: 8px;
+    min-height: 1px;
+  }
+
+  .unlocked-note{
+    padding: 14px 28px 22px;
+    background: var(--paper-light);
+    font-size: 13px;
+    color: var(--sage);
+    font-family:'IBM Plex Mono', monospace;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .unlocked-note.hidden{ display:none; }
+  .check{
+    width:16px;height:16px;
+    border-radius:50%;
+    background: var(--brass);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:10px;
+    flex:none;
+  }
+
+  .assumptions{
+    margin-top: 28px;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+  }
+  .assumptions-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(248,242,228,0.5);
+    margin: 0 0 10px;
+  }
+  .assumptions ul{
+    margin:0;
+    padding: 0 0 0 18px;
+    list-style: disc;
+  }
+  .assumptions li{
+    font-size: 12.5px;
+    color: rgba(248,242,228,0.62);
+    line-height:1.6;
+    margin-bottom: 6px;
+  }
+  .assumptions li:last-child{ margin-bottom:0; }
+
+  footer{
+    text-align:center;
+    margin-top: 22px;
+    font-size: 11.5px;
+    color: rgba(248,242,228,0.45);
+    line-height:1.6;
+  }
+
+  @media (max-width: 480px){
+    .gate-form{ flex-direction:column; }
+    .row .val{ font-size:17px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Amazon FBA<br><em>Profit Calculator</em></h1>
+  <p class="sub">See what your starting capital could become.</p>
+  <div class="example-callout">
+    Example: start with <strong>£1,000</strong> and by the end of Year 1 it could become <strong id="exampleYear1">£8,633</strong>
+  </div>
+
+  <div class="card">
+    <div class="inputs">
+      <div class="field">
+        <label>Starting capital (£)</label>
+        <input type="text" inputmode="numeric" class="amount-input" id="amount" value="1,000">
+      </div>
+      <div class="field">
+        <label>Average ROI per cycle <span class="label-value" id="rateLabel">30%</span></label>
+        <input type="range" id="rate" min="1" max="100" step="1" value="30">
+        <p class="field-note">A "cycle" is one full round of buying stock and getting paid for it — set below. We use this instead of a fixed month or quarter because that's how money actually moves in FBA. Enter your ROI after Amazon's fees, ad spend and cost of goods.</p>
+      </div>
+      <div class="field">
+        <label>Days from purchase to getting paid <span class="label-value" id="cycleLabel">38 days</span></label>
+        <input type="range" id="cycleDays" min="14" max="90" step="1" value="38">
+        <p class="field-note">Covers shipping to Amazon, check-in, time to sell, the 14-day payout hold, and the bank transfer — shorter if stock sells fast, longer if stock remains unsold.</p>
+      </div>
+      <div class="field">
+        <label>Running costs per month (£)</label>
+        <input type="text" inputmode="numeric" class="amount-input" id="costs" value="70">
+        <p class="field-note">Based on typical seller subscriptions (~£50/month) and stationery and packaging (~£20/month).</p>
+      </div>
+    </div>
+
+    <div class="tape-area">
+      <div class="tape-head">
+        <span class="title">Forecast</span>
+        <span class="pulse"></span>
+      </div>
+
+      <div class="row" id="row-1">
+        <span class="yr">Year 1</span>
+        <span><span class="val" id="val-1">£0</span><span class="gain" id="gain-1"></span></span>
+      </div>
+
+      <div class="perf"><span>Unlock to see the rest</span></div>
+
+      <div class="row locked" id="row-2">
+        <span class="yr">Year 2</span>
+        <span><span class="val" id="val-2">£••••••</span><span class="gain" id="gain-2"></span></span>
+      </div>
+    </div>
+
+    <div class="gate" id="gate">
+      <p class="gate-copy">You can already see Year 1. Enter your email to <strong>see Year 2</strong> too, and we'll send you the FBA reinvestment cheat sheet.</p>
+      <div class="gate-form">
+        <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
+        <button class="unlock-btn" id="unlockBtn">Unlock full forecast</button>
+      </div>
+      <div class="gate-error" id="gateError"></div>
+    </div>
+
+    <div class="unlocked-note hidden" id="unlockedNote">
+      <span class="check">✓</span> Forecast unlocked in full — saved to your inbox too.
+    </div>
+  </div>
+
+  <div class="assumptions">
+    <p class="assumptions-title">What this assumes</p>
+    <ul>
+      <li>All profit is reinvested back into stock — none is withdrawn or spent</li>
+      <li>Your ROI and reinvestment cycle stay consistent — in reality these vary, especially as your business grows</li>
+      <li>No one-off costs (equipment, initial tools) or unexpected events (returns, lost stock, account issues, supplier problems)</li>
+      <li>Figures are before tax</li>
+    </ul>
+  </div>
+
+  <footer>
+    Illustrative only — actual margins, fees, and ROI vary and are never guaranteed.<br>
+    Growth compounds daily based on your ROI and reinvestment cycle, minus running costs.
+  </footer>
+</div>
+
+<script>
+  const amountEl = document.getElementById('amount');
+  const rateEl = document.getElementById('rate');
+  const rateLabel = document.getElementById('rateLabel');
+  const cycleDaysEl = document.getElementById('cycleDays');
+  const cycleLabel = document.getElementById('cycleLabel');
+  const costsEl = document.getElementById('costs');
+  const emailEl = document.getElementById('email');
+  const unlockBtn = document.getElementById('unlockBtn');
+  const gateError = document.getElementById('gateError');
+  const gate = document.getElementById('gate');
+  const unlockedNote = document.getElementById('unlockedNote');
+
+  let unlocked = false;
+
+  function parseAmount(str){
+    const n = parseFloat(str.replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function formatMoney(n){
+    return '£' + Math.round(n).toLocaleString('en-GB');
+  }
+
+  function formatAmountInput(){
+    const n = parseAmount(amountEl.value);
+    amountEl.value = n ? n.toLocaleString('en-GB') : '';
+  }
+
+  function compute(){
+    const principal = parseAmount(amountEl.value);
+    const cycleRate = parseFloat(rateEl.value) / 100;
+    const cycleDays = parseFloat(cycleDaysEl.value);
+    const monthlyCost = parseAmount(costsEl.value);
+    rateLabel.textContent = rateEl.value + '%';
+    cycleLabel.textContent = cycleDays + ' days';
+
+    const dailyGrowth = Math.pow(1 + cycleRate, 1 / cycleDays);
+    const dailyCost = (monthlyCost * 12) / 365;
+
+    const years = [1, 2];
+    let value = principal;
+    let daysDone = 0;
+
+    years.forEach(y => {
+      const targetDays = y * 365;
+      while (daysDone < targetDays){
+        value = value * dailyGrowth - dailyCost;
+        daysDone++;
+      }
+      const fv = value;
+      const valEl = document.getElementById('val-' + y);
+      const gainEl = document.getElementById('gain-' + y);
+      if (y === 1 || unlocked){
+        valEl.textContent = formatMoney(fv);
+        const gain = fv - principal;
+        gainEl.textContent = gain >= 0 ? '+' + formatMoney(gain) : formatMoney(gain);
+      } else {
+        valEl.textContent = '£••••••';
+        gainEl.textContent = '';
+      }
+    });
+  }
+
+  amountEl.addEventListener('input', compute);
+  amountEl.addEventListener('blur', () => { formatAmountInput(); compute(); });
+  rateEl.addEventListener('input', compute);
+  cycleDaysEl.addEventListener('input', compute);
+  costsEl.addEventListener('input', compute);
+  costsEl.addEventListener('blur', () => {
+    const n = parseAmount(costsEl.value);
+    costsEl.value = n ? n.toLocaleString('en-GB') : '0';
+    compute();
+  });
+
+  function isValidEmail(v){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  unlockBtn.addEventListener('click', async () => {
+    const email = emailEl.value.trim();
+    if (!isValidEmail(email)){
+      gateError.textContent = 'Enter a valid email to unlock the full forecast.';
+      return;
+    }
+    gateError.textContent = '';
+    unlockBtn.disabled = true;
+    unlockBtn.textContent = 'Printing…';
+
+    const lead = {
+      email,
+      startingAmount: parseAmount(amountEl.value),
+      rate: parseFloat(rateEl.value),
+      cycleDays: parseFloat(cycleDaysEl.value),
+      monthlyCosts: parseAmount(costsEl.value),
+      ts: new Date().toISOString()
+    };
+
+    try {
+      let leads = [];
+      try {
+        const existing = await window.storage.get('fba-reorder-leads', true);
+        if (existing && existing.value) leads = JSON.parse(existing.value);
+      } catch (e) {
+        leads = [];
+      }
+      leads.push(lead);
+      await window.storage.set('fba-reorder-leads', JSON.stringify(leads), true);
+    } catch (e) {
+      console.error('Storage error saving lead:', e);
+    }
+
+    [2].forEach(y => document.getElementById('row-' + y).classList.remove('locked'));
+    unlocked = true;
+    compute();
+
+    gate.classList.add('hidden');
+    unlockedNote.classList.remove('hidden');
+  });
+
+  formatAmountInput();
+  compute();
+</script>
+
+</body>
+</html>
