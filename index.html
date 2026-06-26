@@ -17,7 +17,6 @@
     --brass-light:#FFAC31;
     --sage:#146EB4;
     --sage-line: rgba(19,25,33,0.14);
-    --locked: #C7CDD6;
   }
 
   *{box-sizing:border-box;}
@@ -268,122 +267,6 @@
     margin-left: 8px;
   }
 
-  .row.locked .val{
-    filter: blur(6px);
-    color: var(--locked);
-    user-select:none;
-  }
-  .row.locked .gain{ opacity:0; }
-
-  /* perforation divider */
-  .perf{
-    position:relative;
-    height: 18px;
-    margin: 4px 0 2px;
-  }
-  .perf::before{
-    content:"";
-    position:absolute;
-    top:50%; left:0; right:0;
-    border-top: 2px dotted var(--sage);
-  }
-  .perf span{
-    position:relative;
-    background: var(--paper-light);
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--sage);
-    padding: 0 8px;
-    display:inline-block;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  /* ===== Gate ===== */
-  .gate{
-    padding: 20px 28px 26px;
-    background: var(--paper-light);
-  }
-  .gate.hidden{ display:none; }
-
-  .gate-copy{
-    font-size: 13.5px;
-    color: rgba(42,31,20,0.7);
-    line-height:1.5;
-    margin: 0 0 14px;
-  }
-  .gate-copy strong{ color: var(--ledger); }
-
-  .gate-form{
-    display:flex;
-    gap:8px;
-  }
-  .gate-form input[type="email"]{
-    flex:1;
-    background: #fff;
-    border: 1px solid var(--sage-line);
-    border-radius: 3px;
-    padding: 11px 12px;
-    font-family:'IBM Plex Sans', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    outline:none;
-    min-width: 0;
-  }
-  .gate-form input[type="email"]:focus{
-    border-color: var(--brass);
-    box-shadow: 0 0 0 3px rgba(184,137,59,0.15);
-  }
-
-  .unlock-btn{
-    background: var(--brass);
-    color: var(--ink);
-    border:none;
-    border-radius: 3px;
-    padding: 11px 18px;
-    font-family:'IBM Plex Sans', sans-serif;
-    font-weight:600;
-    font-size: 14px;
-    cursor:pointer;
-    white-space:nowrap;
-    transition: background 0.2s ease, transform 0.15s ease;
-  }
-  .unlock-btn:hover{ background: var(--brass-light); }
-  .unlock-btn:active{ transform: scale(0.97); }
-  .unlock-btn:disabled{ opacity:0.6; cursor:default; }
-
-  .gate-error{
-    font-size: 12.5px;
-    color: #9C3B2E;
-    margin-top: 8px;
-    min-height: 1px;
-  }
-
-  .unlocked-note{
-    padding: 14px 28px 22px;
-    background: var(--paper-light);
-    font-size: 13px;
-    color: var(--sage);
-    font-family:'IBM Plex Mono', monospace;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .unlocked-note.hidden{ display:none; }
-  .check{
-    width:16px;height:16px;
-    border-radius:50%;
-    background: var(--brass);
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-size:10px;
-    flex:none;
-  }
-
   .assumptions{
     margin-top: 28px;
     padding: 18px 20px;
@@ -421,7 +304,6 @@
   }
 
   @media (max-width: 480px){
-    .gate-form{ flex-direction:column; }
     .row .val{ font-size:17px; }
   }
 </style>
@@ -485,26 +367,6 @@
         <span class="yr">Year 1</span>
         <span><span class="val" id="val-1">£0</span><span class="gain" id="gain-1"></span></span>
       </div>
-
-      <div class="perf"><span>Unlock to see the rest</span></div>
-
-      <div class="row locked" id="row-2">
-        <span class="yr">Year 2</span>
-        <span><span class="val" id="val-2">£••••••</span><span class="gain" id="gain-2"></span></span>
-      </div>
-    </div>
-
-    <div class="gate" id="gate">
-      <p class="gate-copy">You can already see Year 1. Enter your email to <strong>see Year 2</strong> too, and we'll send you the FBA reinvestment cheat sheet.</p>
-      <div class="gate-form">
-        <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
-        <button class="unlock-btn" id="unlockBtn">Unlock full forecast</button>
-      </div>
-      <div class="gate-error" id="gateError"></div>
-    </div>
-
-    <div class="unlocked-note hidden" id="unlockedNote">
-      <span class="check">✓</span> Forecast unlocked in full, saved to your inbox too.
     </div>
   </div>
 
@@ -531,13 +393,6 @@
   const cycleDaysEl = document.getElementById('cycleDays');
   const cycleLabel = document.getElementById('cycleLabel');
   const costsEl = document.getElementById('costs');
-  const emailEl = document.getElementById('email');
-  const unlockBtn = document.getElementById('unlockBtn');
-  const gateError = document.getElementById('gateError');
-  const gate = document.getElementById('gate');
-  const unlockedNote = document.getElementById('unlockedNote');
-
-  let unlocked = false;
 
   function parseAmount(str){
     const n = parseFloat(str.replace(/[^0-9.]/g, ''));
@@ -564,7 +419,7 @@
     const dailyGrowth = Math.pow(1 + cycleRate, 1 / cycleDays);
     const dailyCost = (monthlyCost * 12) / 365;
 
-    const years = [1, 2];
+    const years = [1];
     let value = principal;
     let daysDone = 0;
 
@@ -577,14 +432,9 @@
       const fv = value;
       const valEl = document.getElementById('val-' + y);
       const gainEl = document.getElementById('gain-' + y);
-      if (y === 1 || unlocked){
-        valEl.textContent = formatMoney(fv);
-        const gain = fv - principal;
-        gainEl.textContent = gain >= 0 ? '+' + formatMoney(gain) : formatMoney(gain);
-      } else {
-        valEl.textContent = '£••••••';
-        gainEl.textContent = '';
-      }
+      valEl.textContent = formatMoney(fv);
+      const gain = fv - principal;
+      gainEl.textContent = gain >= 0 ? '+' + formatMoney(gain) : formatMoney(gain);
     });
   }
 
@@ -597,51 +447,6 @@
     const n = parseAmount(costsEl.value);
     costsEl.value = n ? n.toLocaleString('en-GB') : '0';
     compute();
-  });
-
-  function isValidEmail(v){
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  }
-
-  unlockBtn.addEventListener('click', async () => {
-    const email = emailEl.value.trim();
-    if (!isValidEmail(email)){
-      gateError.textContent = 'Enter a valid email to unlock the full forecast.';
-      return;
-    }
-    gateError.textContent = '';
-    unlockBtn.disabled = true;
-    unlockBtn.textContent = 'Printing…';
-
-    const lead = {
-      email,
-      startingAmount: parseAmount(amountEl.value),
-      rate: parseFloat(rateEl.value),
-      cycleDays: parseFloat(cycleDaysEl.value),
-      monthlyCosts: parseAmount(costsEl.value),
-      ts: new Date().toISOString()
-    };
-
-    try {
-      let leads = [];
-      try {
-        const existing = await window.storage.get('fba-reorder-leads', true);
-        if (existing && existing.value) leads = JSON.parse(existing.value);
-      } catch (e) {
-        leads = [];
-      }
-      leads.push(lead);
-      await window.storage.set('fba-reorder-leads', JSON.stringify(leads), true);
-    } catch (e) {
-      console.error('Storage error saving lead:', e);
-    }
-
-    [2].forEach(y => document.getElementById('row-' + y).classList.remove('locked'));
-    unlocked = true;
-    compute();
-
-    gate.classList.add('hidden');
-    unlockedNote.classList.remove('hidden');
   });
 
   formatAmountInput();
